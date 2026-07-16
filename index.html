@@ -2,48 +2,73 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>報價單產生器</title>
+    <title>EC InfoTech 專業報價單系統</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
     <style>
-        body { font-family: sans-serif; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ccc; padding: 8px; }
-        .total { font-weight: bold; font-size: 1.2em; }
+        body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        input { width: 100%; padding: 5px; }
     </style>
 </head>
 <body>
-    <h2>EC InfoTech 報價單系統</h2>
+    <h2>報價單資料輸入</h2>
+    <div class="grid">
+        <input type="text" id="to" placeholder="To (客戶名稱)">
+        <input type="text" id="site" placeholder="Site (地點)">
+        <input type="text" id="attn" placeholder="Attn (聯絡人)">
+        <input type="text" id="tel" placeholder="Tel (手提電話)">
+        <input type="text" id="email" placeholder="E-mail(電子郵箱)">
+        <input type="text" id="srno" placeholder="S/R No. (服務請求號碼)">
+        <input type="text" id="tel" placeholder="Tel (手提電話)">
+    </div>
+
     <table id="itemTable">
-        <thead><tr><th>項目描述</th><th>單價</th><th>數量</th><th>合計</th><th>刪除</th></tr></thead>
+        <thead><tr><th>項目</th><th>單價</th><th>數量</th><th>操作</th></tr></thead>
         <tbody id="itemBody">
             <tr>
                 <td><input type="text" class="desc"></td>
-                <td><input type="number" class="rate" onchange="calc()"></td>
-                <td><input type="number" class="qty" onchange="calc()"></td>
-                <td class="subtotal">0</td>
-                <td><button onclick="this.parentElement.parentElement.remove()">❌</button></td>
+                <td><input type="number" class="rate"></td>
+                <td><input type="number" class="qty"></td>
+                <td><button onclick="this.parentElement.parentElement.remove()">刪除</button></td>
             </tr>
         </tbody>
     </table>
     <button onclick="addRow()">+ 新增項目</button>
-    <button onclick="downloadExcel()">💾 匯出 Excel</button>
-    <p class="total">總金額: <span id="grandTotal">0</span></p>
+    <button onclick="generateExcel()" style="background: green; color: white;">下載報價單 (含模板)</button>
 
     <script>
         function addRow() {
-            document.getElementById('itemBody').innerHTML += `<tr><td><input type="text" class="desc"></td><td><input type="number" class="rate" onchange="calc()"></td><td><input type="number" class="qty" onchange="calc()"></td><td class="subtotal">0</td><td><button onclick="this.parentElement.parentElement.remove()">❌</button></td></tr>`;
+            document.getElementById('itemBody').innerHTML += `<tr><td><input type="text" class="desc"></td><td><input type="number" class="rate"></td><td><input type="number" class="qty"></td><td><button onclick="this.parentElement.parentElement.remove()">刪除</button></td></tr>`;
         }
-        function calc() {
-            let total = 0;
-            document.querySelectorAll('#itemBody tr').forEach(tr => {
-                const sub = tr.querySelector('.rate').value * tr.querySelector('.qty').value;
-                tr.querySelector('.subtotal').innerText = sub;
-                total += sub;
+
+        async function generateExcel() {
+            // 1. 讀取模板檔案
+            const response = await fetch('example.xlsx'); 
+            const buffer = await response.arrayBuffer();
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.load(buffer);
+            const sheet = workbook.getWorksheet(1); // 假設模板在第一頁
+
+            // 2. 填入基本資訊 (假設 To 在 B8, Date 在 B9，請依您的模板修改)
+            sheet.getCell('B8').value = document.getElementById('to').value;
+            sheet.getCell('B9').value = document.getElementById('date').value;
+
+            // 3. 填入動態項目 (假設從第 15 行開始)
+            let startRow = 15;
+            document.querySelectorAll('#itemBody tr').forEach((tr, index) => {
+                sheet.getCell(`B${startRow + index}`).value = tr.querySelector('.desc').value;
+                sheet.getCell(`G${startRow + index}`).value = tr.querySelector('.rate').value;
+                sheet.getCell(`I${startRow + index}`).value = tr.querySelector('.qty').value;
             });
-            document.getElementById('grandTotal').innerText = total;
-        }
-        function downloadExcel() {
-            alert("匯出功能已準備就緒，下一步我們可以結合您的 Excel 模板！");
+
+            // 4. 下載檔案
+            const finalBuffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([finalBuffer], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "Quotation_Filled.xlsx";
+            a.click();
         }
     </script>
 </body>
