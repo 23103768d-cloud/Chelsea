@@ -16,10 +16,20 @@
         <input type="text" id="to" placeholder="To (客戶名稱)">
         <input type="text" id="site" placeholder="Site (地點)">
         <input type="text" id="attn" placeholder="Attn (聯絡人)">
-        <input type="text" id="tel" placeholder="Tel (手提電話)">
-        <input type="text" id="email" placeholder="E-mail(電子郵箱)">
+        <input type="text" id="tel1" placeholder="Tel (客戶手提電話)">
+        <input type="text" id="email1" placeholder="E-mail(客戶電郵)">
         <input type="text" id="srno" placeholder="S/R No. (服務請求號碼)">
-        <input type="text" id="tel" placeholder="Tel (手提電話)">
+        <input type="text" id="date1" placeholder="Date (日期)">
+        <input type="text" id="ourref" placeholder="Our Ref. (本處檔號)">
+        <input type="text" id="yourref" placeholder="Your Ref. (來函檔號)">
+        <input type="text" id="from" placeholder="From (寄件人 / 發出者)">
+        <input type="text" id="tel2" placeholder="Tel (寄件人手提電話)">
+        <input type="text" id="fax" placeholder="Fax (傳真)">
+        <input type="text" id="email2" placeholder="E-mail(寄件人電郵)">
+        <input type="text" id="contractno" placeholder="Contract No. (合約編號)">
+        <input type="text" id="prepare" placeholder="Prepared by (準備者)">
+        <input type="text" id="check" placeholder=" Checked by. (審核者)">
+        <input type="text" id="date2" placeholder="Date (日期)">
     </div>
 
     <table id="itemTable">
@@ -50,8 +60,23 @@
             const sheet = workbook.getWorksheet(1); // 假設模板在第一頁
 
             // 2. 填入基本資訊 (假設 To 在 B8, Date 在 B9，請依您的模板修改)
-            sheet.getCell('B8').value = document.getElementById('to').value;
-            sheet.getCell('B9').value = document.getElementById('date').value;
+            sheet.getCell('C3').value = document.getElementById('to').value;
+            sheet.getCell('C4').value = document.getElementById('site').value;
+            sheet.getCell('C5').value = document.getElementById('attn').value;
+            sheet.getCell('C6').value = document.getElementById('tel1').value;
+            sheet.getCell('C7').value = document.getElementById('email1').value;
+            sheet.getCell('C8').value = document.getElementById('srno').value;
+            sheet.getCell('L3').value = document.getElementById('date1').value;
+            sheet.getCell('L4').value = document.getElementById('ourref').value;
+            sheet.getCell('L5').value = document.getElementById('yourref').value;
+            sheet.getCell('L6').value = document.getElementById('from').value;
+            sheet.getCell('L7').value = document.getElementById('tel2').value;
+            sheet.getCell('L8').value = document.getElementById('fax').value;
+            sheet.getCell('L9').value = document.getElementById('email2').value;
+            sheet.getCell('L10').value = document.getElementById('contractno').value;
+            sheet.getCell('L42').value = document.getElementById('prepare').value;
+            sheet.getCell('L43').value = document.getElementById('check').value;
+            sheet.getCell('L46').value = document.getElementById('date2').value;
 
             // 3. 填入動態項目 (假設從第 15 行開始)
             let startRow = 15;
