@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>報價單產生器</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; }
+        .total { font-weight: bold; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+    <h2>EC InfoTech 報價單系統</h2>
+    <table id="itemTable">
+        <thead><tr><th>項目描述</th><th>單價</th><th>數量</th><th>合計</th><th>刪除</th></tr></thead>
+        <tbody id="itemBody">
+            <tr>
+                <td><input type="text" class="desc"></td>
+                <td><input type="number" class="rate" onchange="calc()"></td>
+                <td><input type="number" class="qty" onchange="calc()"></td>
+                <td class="subtotal">0</td>
+                <td><button onclick="this.parentElement.parentElement.remove()">❌</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button onclick="addRow()">+ 新增項目</button>
+    <button onclick="downloadExcel()">💾 匯出 Excel</button>
+    <p class="total">總金額: <span id="grandTotal">0</span></p>
+
+    <script>
+        function addRow() {
+            document.getElementById('itemBody').innerHTML += `<tr><td><input type="text" class="desc"></td><td><input type="number" class="rate" onchange="calc()"></td><td><input type="number" class="qty" onchange="calc()"></td><td class="subtotal">0</td><td><button onclick="this.parentElement.parentElement.remove()">❌</button></td></tr>`;
+        }
+        function calc() {
+            let total = 0;
+            document.querySelectorAll('#itemBody tr').forEach(tr => {
+                const sub = tr.querySelector('.rate').value * tr.querySelector('.qty').value;
+                tr.querySelector('.subtotal').innerText = sub;
+                total += sub;
+            });
+            document.getElementById('grandTotal').innerText = total;
+        }
+        function downloadExcel() {
+            alert("匯出功能已準備就緒，下一步我們可以結合您的 Excel 模板！");
+        }
+    </script>
+</body>
+</html>
